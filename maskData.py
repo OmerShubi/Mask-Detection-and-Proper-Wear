@@ -1,7 +1,8 @@
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, random_split
 import torchvision
 import torch
-
+import pytorch_lightning as pl
+from torchvision import transforms
 
 class maskDataset(Dataset):
     """Face Landmarks dataset."""
@@ -44,3 +45,44 @@ class maskDataset(Dataset):
         target = {"boxes": bbox, "labels": proper_mask}
 
         return im, target
+
+
+
+
+class MNISTDataModule(pl.LightningDataModule):
+
+    def __init__(self, data_dir: str = './'):
+        super().__init__()
+        self.data_dir = data_dir
+        # self.transform = transforms.Compose([
+        #     transforms.ToTensor(),
+        #     transforms.Normalize((0.1307,), (0.3081,))
+        # ])
+
+
+    def prepare_data(self):
+        pass
+
+    def setup(self, stage: Optional[str] = None):
+
+        # Assign train/val datasets for use in dataloaders
+        if stage == 'fit' or stage is None:
+            data = maskDataset(self.data_dir, transform=self.transform)
+            self.train, self.val = random_split(data, [55000, 5000])
+
+
+        # Assign test dataset for use in dataloader(s)
+        if stage == 'test' or stage is None:
+            self.mnist_test = MNIST(self.data_dir, train=False, transform=self.transform)
+
+            # Optionally...
+            # self.dims = tuple(self.mnist_test[0][0].shape)
+
+    def train_dataloader(self):
+        return DataLoader(self.mnist_train, batch_size=32)
+
+    def val_dataloader(self):
+        return DataLoader(self.mnist_val, batch_size=32)
+
+    def test_dataloader(self):
+        return DataLoader(self.mnist_test, batch_size=32)

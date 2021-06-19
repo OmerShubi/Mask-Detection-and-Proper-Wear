@@ -8,7 +8,7 @@ from torchvision import transforms
 import pytorch_lightning as pl
 
 
-class LitAutoEncoder(pl.LightningModule):
+class LitModel(pl.LightningModule):
 
     def __init__(self):
         super().__init__()
