@@ -1,8 +1,10 @@
 from LightingModel import LitModel
-
-dataset = MNIST(os.getcwd(), download=True, transform=transforms.ToTensor())
-train, val = random_split(dataset, [55000, 5000])
+import pytorch_lightning as pl
+from maskData import MaskDataModule
+from config import train_dir
 
 model = LitModel()
 trainer = pl.Trainer()
-trainer.fit(model, DataLoader(train), DataLoader(val))
+trainer.fit(model, datamodule=MaskDataModule(data_dir=train_dir))
+
+pass

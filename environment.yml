@@ -1,4 +1,7 @@
 name: hw2_env
+channels:
+  - default
+  - conda-forge
 dependencies:
   - python=3
   - nb_conda
@@ -7,3 +10,4 @@ dependencies:
   - torchvision
   - opencv
   - pytorch
+  - pytorch-lightning

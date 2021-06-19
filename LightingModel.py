@@ -6,15 +6,15 @@ from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
 import pytorch_lightning as pl
-
+from torchvision.models.detection import fasterrcnn_resnet50_fpn
 
 class LitModel(pl.LightningModule):
 
     def __init__(self):
         super().__init__()
-        self.model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False,
-                                                                          num_classes=2,
-                                                                          pretrained_backbone=False)
+        self.model = fasterrcnn_resnet50_fpn(pretrained=False,
+                                          num_classes=2,
+                                          pretrained_backbone=False)
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
 
@@ -23,10 +23,9 @@ class LitModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop. It is independent of forward
-        x, y = batch
-        x = x.view(x.size(0), -1)
-        x_hat = self.model(z)
-        loss = F.mse_loss(x_hat, x)
+        images, targets = batch
+        x_hat = self.model(images, targets)
+        loss = 0
         self.log('train_loss', loss)
         return loss
 
