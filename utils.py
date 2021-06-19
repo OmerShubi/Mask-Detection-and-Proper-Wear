@@ -1,15 +1,33 @@
 import os
-import numpy as np
-import cv2
 import json
+import cv2
+import numpy as np
+import torch
+import torchvision
 import matplotlib.pyplot as plt
 from matplotlib import patches
 
-np.random.seed(42)
-image_dir = "example_images"
+def parse_data_for_model(image_dir):
+    filenames = os.listdir(image_dir)
+    images = []
+    imageid_toindex = {}
+    targets = []
+    for index, filename in enumerate(filenames):
+        image_id, bbox, proper_mask = filename.strip(".jpg").split("__")
+        bbox = json.loads(bbox) #[x, y, w, h]
+        bbox = torch.tensor([[bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]]) #[x1, y1, x2, y2]
+        proper_mask = torch.tensor([1]) if proper_mask.lower() == "true" else torch.tensor([0])
+        im = torchvision.io.read_image(os.path.join(image_dir, filename)) #shape = (C,H,W)
+        #im = cv2.imread(os.path.join(image_dir, filename)) # shape = (W,H,C)
+        #im = im[:, :, ::-1] # TODO RGB/BGR?
+        #im = np.transpose(im, (2,1,0)) # shape = (C,H,W)
+        im = im / im.max()
+        images.append(im)
+        targets.append({"boxes": bbox, "labels": proper_mask})
+        imageid_toindex[image_id] = index
+    return images, targets, imageid_toindex
 
-
-def parse_images_and_bboxes(image_dir):
+def parse_data_for_vis(image_dir):
     """
     Parse a directory with images.
     :param image_dir: Path to directory with images.
@@ -23,7 +41,6 @@ def parse_images_and_bboxes(image_dir):
         proper_mask = True if proper_mask.lower() == "true" else False
         data.append((filename, image_id, bbox, proper_mask))
     return data
-
 
 def calc_iou(bbox_a, bbox_b):
     """
@@ -42,15 +59,16 @@ def calc_iou(bbox_a, bbox_b):
     union = w1 * h1 + w2 * h2 - intersection    # Union = Total Area - Intersection
     return intersection / union
 
-
-def show_images_and_bboxes(data, image_dir):
+def show_images_and_bboxes(data, image_dir, imageid_toindex, predictions):
     """
     Plot images with bounding boxes. Predicts random bounding boxes and computes IoU.
     :param data: Iterable with (filename, image_id, bbox, proper_mask) structure.
     :param image_dir: Path to directory with images.
     :return: None
     """
+    # images, targets, images_id, filenames
     for filename, image_id, bbox, proper_mask in data:
+
         # Load image
         im = cv2.imread(os.path.join(image_dir, filename))
         # BGR to RGB
@@ -58,7 +76,8 @@ def show_images_and_bboxes(data, image_dir):
         # Ground truth bbox
         x1, y1, w1, h1 = bbox
         # Predicted bbox
-        x2, y2, w2, h2 = random_bbox_predict(bbox)
+        predicted_bbox = predictions[imageid_toindex[image_id]]['boxes']
+        x2, y2, w2, h2 = predicted_bbox
         # Calculate IoU
         iou = calc_iou(bbox, (x2, y2, w2, h2))
         # Plot image and bboxes
@@ -75,17 +94,3 @@ def show_images_and_bboxes(data, image_dir):
         fig.legend()
         plt.show()
 
-
-def random_bbox_predict(bbox):
-    """
-    Randomly predicts a bounding box given a ground truth bounding box.
-    For example purposes only.
-    :param bbox: Iterable with numbers.
-    :return: Random bounding box, relative to the input bbox.
-    """
-    return [x + np.random.randint(-15, 15) for x in bbox]
-
-
-if __name__ == "__main__":
-    data = parse_images_and_bboxes(image_dir)
-    show_images_and_bboxes(data, image_dir)
