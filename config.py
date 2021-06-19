@@ -1,6 +1,6 @@
-train_dir = "train_example"
-val_dir = "test_example"
-max_epochs = 1
+train_dir = "train"
+val_dir = "test"
+max_epochs = 2
 batch_size = 4
-num_workers =5
-model_path = '/home/student/hw2/lightning_logs/version_0/checkpoints/epoch=0-step=0.ckpt'
+num_workers =0
+model_path = './lightning_logs/version_0/checkpoints/epoch=0-step=0.ckpt' # TODO replace with final model

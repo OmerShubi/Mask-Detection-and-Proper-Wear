@@ -1,13 +1,10 @@
-import os
 import torch
-from torch import nn
-import torch.nn.functional as F
-from torchvision.datasets import MNIST
-from torch.utils.data import DataLoader, random_split
-from torchvision import transforms
+
 import pytorch_lightning as pl
-from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN
+from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
+
+from utils import calc_iou
 
 
 class LitModel(pl.LightningModule):
@@ -36,22 +33,41 @@ class LitModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop. It is independent of forward
         images, targets = batch
-        x_hat = self.model(images, targets)
-        loss = sum(x_hat.values())
-        self.log('train_loss', loss)
-        return loss
+        detections, losses = self.model(images, targets) # TODO detections is empty (change source)
+        loss, iou, acc = self.calc_metrics(losses, detections, targets)
+        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_iou', iou, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        return {'loss': loss}
 
 
-    # def validation_step(self, batch, batch_idx):
-    #     # training_step defines the train loop. It is independent of forward
-    #     images, targets = batch
-    #     x_hat = self.model(images, targets)
-    #     loss = x_hat['loss_objectness'] # TODO
-    #     self.log('val_loss', loss)
-    #     return loss
-
+    def validation_step(self, batch, batch_idx):
+        # training_step defines the train loop. It is independent of forward
+        images, targets = batch
+        detections, losses = self.model(images, targets) # TODO loss is empty (change source)
+        loss, iou, acc = self.calc_metrics(losses, detections, targets)
+        self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_iou', iou, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        return {'loss': loss}
 
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
+
+    def calc_metrics(self, loss, detections, targets):
+        sum_loss = sum(loss.values())
+        iou = 0
+        acc = 0
+        for detection, target in zip(detections, targets):
+            pred_bbox = detection['boxes']
+            pred_label = detection['labels']
+            if pred_bbox:
+                pred_bbox[2] -= pred_bbox[0]
+                pred_bbox[3] -= pred_bbox[1]
+                iou += calc_iou(pred_bbox, target['boxes'][0].tolist())
+
+            acc += (pred_label==target['labels'])
+
+        return sum_loss, iou, acc
