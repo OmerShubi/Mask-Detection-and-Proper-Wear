@@ -84,7 +84,7 @@ class MaskDataModule(pl.LightningDataModule):
             # self.dims = tuple(self.mnist_test[0][0].shape)
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=32, collate_fn=custom_collate_fn)
+        return DataLoader(self.train, batch_size=32, collate_fn=custom_collate_fn, num_workers=5)
 
     # def val_dataloader(self):
     #     return DataLoader(self.val, batch_size=32)

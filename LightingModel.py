@@ -25,7 +25,7 @@ class LitModel(pl.LightningModule):
         # training_step defines the train loop. It is independent of forward
         images, targets = batch
         x_hat = self.model(images, targets)
-        loss = 0
+        loss = x_hat['loss_objectness']
         self.log('train_loss', loss)
         return loss
 
