@@ -8,6 +8,7 @@ import torch
 import pytorch_lightning as pl
 from torchvision import transforms
 
+
 class maskDataset(Dataset):
     """Face Landmarks dataset."""
 
@@ -54,15 +55,18 @@ class maskDataset(Dataset):
 
 class MaskDataModule(pl.LightningDataModule):
 
-    def __init__(self, data_dir: str = './'):
+    def __init__(self, train_dir=None, val_dir=None, test_dir=None, batch_size=32, num_workers=1):
         super().__init__()
-        self.data_dir = data_dir
+        self.train_dir = train_dir
+        self.val_dir = val_dir
+        self.test_dir = test_dir
         self.transform = None
+        self.batch_size = batch_size
+        self.num_workers = num_workers
         # self.transform = transforms.Compose([
         #     transforms.ToTensor(),
         #     transforms.Normalize((0.1307,), (0.3081,))
         # ]) # TODO add transformations?
-
 
     def prepare_data(self):
         pass
@@ -71,26 +75,22 @@ class MaskDataModule(pl.LightningDataModule):
 
         # Assign train/val datasets for use in dataloaders
         if stage == 'fit' or stage is None:
-            data = maskDataset(self.data_dir, transform=self.transform)
-            self.train = data
-            # self.train, self.val = random_split(data, [55000, 5000])
-            # TODO add validation
+            self.train = maskDataset(self.train_dir, transform=self.transform)
+            self.val = maskDataset(self.val_dir, transform=self.transform)
 
         # Assign test dataset for use in dataloader(s)
         if stage == 'test' or stage is None:
-            # self.mnist_test = MNIST(self.data_dir, train=False, transform=self.transform)
-            pass # TODO
-            # Optionally...
-            # self.dims = tuple(self.mnist_test[0][0].shape)
+            self.test = maskDataset(self.test_dir, transform=self.transform)
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=32, collate_fn=custom_collate_fn, num_workers=5)
+        return DataLoader(self.train, batch_size=self.batch_size, collate_fn=custom_collate_fn, num_workers=self.num_workers)
 
-    # def val_dataloader(self):
-    #     return DataLoader(self.val, batch_size=32)
-    #
-    # def test_dataloader(self):
-    #     return DataLoader(self.test, batch_size=32)
+    def val_dataloader(self):
+        return DataLoader(self.val, batch_size=self.batch_size, collate_fn=custom_collate_fn, num_workers=self.num_workers)
+
+    def test_dataloader(self):
+        return DataLoader(self.test, batch_size=self.batch_size, collate_fn=custom_collate_fn, num_workers=self.num_workers, shuffle=False)
+
 
 def custom_collate_fn(batch):
     images = [x[0] for x in batch]

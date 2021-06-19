@@ -13,3 +13,4 @@ dependencies:
   - pytorch
   - pytorch-lightning
   - cudatoolkit
+  - pandas
