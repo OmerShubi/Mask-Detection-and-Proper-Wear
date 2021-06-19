@@ -1,6 +1,7 @@
 name: hw2_env
 channels:
   - default
+  - pytorch
   - conda-forge
 dependencies:
   - python=3
@@ -11,3 +12,4 @@ dependencies:
   - opencv
   - pytorch
   - pytorch-lightning
+  - cudatoolkit

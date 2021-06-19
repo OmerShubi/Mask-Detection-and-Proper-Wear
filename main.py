@@ -3,7 +3,6 @@ import torch
 from utils import parse_data_for_model, parse_data_for_vis, show_images_and_bboxes
 from config import train_dir, test_dir
 
-# TODO random state
 model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=False,
                                                              num_classes=2,
                                                              pretrained_backbone=False)
