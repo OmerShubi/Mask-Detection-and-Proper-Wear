@@ -55,7 +55,7 @@ class maskDataset(Dataset):
 
 class MaskDataModule(pl.LightningDataModule):
 
-    def __init__(self, train_dir=None, val_dir=None, test_dir=None, batch_size=32, num_workers=1):
+    def __init__(self, train_dir=None, val_dir=None, test_dir=None, batch_size=32, num_workers=0):
         super().__init__()
         self.train_dir = train_dir
         self.val_dir = val_dir

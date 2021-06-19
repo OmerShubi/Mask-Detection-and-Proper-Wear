@@ -24,7 +24,8 @@ dm.setup(stage='test')
 data_loader = dm.test_dataloader()
 preds = []
 for (images, targets) in data_loader:
-    preds.extend(model(images))
+    x=model(images)
+    preds.extend(x[0])
 
 proper_mask_pred = []
 for pred in preds:
