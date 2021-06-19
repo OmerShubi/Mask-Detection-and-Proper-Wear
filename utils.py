@@ -17,10 +17,7 @@ def parse_data_for_model(image_dir):
         bbox = json.loads(bbox) #[x, y, w, h]
         bbox = torch.tensor([[bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]]) #[x1, y1, x2, y2]
         proper_mask = torch.tensor([1]) if proper_mask.lower() == "true" else torch.tensor([0])
-        im = torchvision.io.read_image(os.path.join(image_dir, filename)) #shape = (C,H,W)
-        #im = cv2.imread(os.path.join(image_dir, filename)) # shape = (W,H,C)
-        #im = im[:, :, ::-1] # TODO RGB/BGR?
-        #im = np.transpose(im, (2,1,0)) # shape = (C,H,W)
+        im = torchvision.io.read_image(os.path.join(image_dir, filename)) #shape = (C,H,W) # TODO RGB/BGR?
         im = im / im.max()
         images.append(im)
         targets.append({"boxes": bbox, "labels": proper_mask})
@@ -77,20 +74,27 @@ def show_images_and_bboxes(data, image_dir, imageid_toindex, predictions):
         x1, y1, w1, h1 = bbox
         # Predicted bbox
         predicted_bbox = predictions[imageid_toindex[image_id]]['boxes']
-        x2, y2, w2, h2 = predicted_bbox
+        predicted_left_bbox = predicted_bbox[predicted_bbox[:, 0].argmin()]
+        x2, y2, w2, h2 = predicted_left_bbox[0], predicted_left_bbox[1], predicted_left_bbox[2]-predicted_left_bbox[0], predicted_left_bbox[3]-predicted_left_bbox[1]
         # Calculate IoU
         iou = calc_iou(bbox, (x2, y2, w2, h2))
         # Plot image and bboxes
         fig, ax = plt.subplots()
         ax.imshow(im)
         rect = patches.Rectangle((x1, y1), w1, h1,
-                                 linewidth=2, edgecolor='g', facecolor='none', label='ground-truth')
+                                 linewidth=2,
+                                 edgecolor='g',
+                                 facecolor='none',
+                                 label='ground-truth')
         ax.add_patch(rect)
         rect = patches.Rectangle((x2, y2), w2, h2,
-                                 linewidth=2, edgecolor='b', facecolor='none', label='predicted')
+                                 linewidth=2,
+                                 edgecolor='b',
+                                 facecolor='none',
+                                 label='predicted')
         ax.add_patch(rect)
-        fig.suptitle(f"proper_mask={proper_mask}, IoU={iou:.2f}")
-        ax.axis('off')
+        # fig.suptitle(f"proper_mask={proper_mask}, IoU={iou:.2f}")
+        # ax.axis('off')
         fig.legend()
-        plt.show()
+        plt.savefig(f'{image_id}_predicted.png')
 
