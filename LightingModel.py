@@ -32,6 +32,7 @@ class LitModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop. It is independent of forward
+        # TODO deal with empty bboxes okay? in test?
         images, targets = batch
         to_remove_indices = []
         for indx,target in enumerate(targets):
