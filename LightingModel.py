@@ -73,7 +73,6 @@ class LitModel(pl.LightningModule):
 
     def step(self, batch):
         images, targets = batch
-        # TODO deal with empty bboxes okay?
         to_remove_indices = []
         for indx, target in enumerate(targets):
             bbox = target['boxes'][0]

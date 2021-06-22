@@ -20,7 +20,7 @@ else:
     min_size_image = 400
     max_size_image = 600
 
-model_path = 'lightning_logs/version_56/checkpoints/epoch=1-step=399.ckpt'
+model_path = 'lightning_logs/version_57/checkpoints/epoch=0-step=3999.ckpt'
 
 # Do not change
 random_seed = 8318

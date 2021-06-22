@@ -10,10 +10,7 @@ Then in browser:
 
 # TODOs
 - code todos
-- EDA & report
-  - interesting images
-  - insights from visual data inspection
-  - statsitcs about bboxes (sizes, places)  
+- report - model
 - second experiment
 - save & load model from google drive
 - hypterparameter & optimiziation - if have time
@@ -21,4 +18,5 @@ Then in browser:
 - README
 - tries if can fall
 - read project def
-- Public git
+- public git
+- Hide code cells and export report to html
