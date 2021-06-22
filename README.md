@@ -8,9 +8,7 @@ Then in browser:
 `<PUBLIC_IP>:<PORT>`
 
 
-# TODOs 
-- loss and bboxes in train / val
-  - update env
+# TODOs
 - code todos
 - Tensorboard (activate and see graphs)
 - second experiment

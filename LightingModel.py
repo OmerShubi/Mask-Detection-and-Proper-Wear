@@ -25,10 +25,6 @@ class LitModel(pl.LightningModule):
                                 box_detections_per_img=1,
                                 min_size=config.min_size_image,
                                 max_size=config.max_size_image)
-        # self.model = fasterrcnn_resnet50_fpn(pretrained=False,
-        #                                      num_classes=2,
-        #                                      pretrained_backbone=False, box_detections_per_img=1)
-
 
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
@@ -37,51 +33,23 @@ class LitModel(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop. It is independent of forward
-        # TODO deal with empty bboxes okay?
-        images, targets = batch
-        to_remove_indices = []
-        for indx,target in enumerate(targets):
-            bbox = target['boxes'][0]
-            if bbox[0]>=bbox[2] or bbox[1] >= bbox[3]:
-                to_remove_indices.append(indx)
-        for indx in to_remove_indices:
-            images.pop(indx)
-            targets.pop(indx)
-
-        # x = self.model(images, targets)
-        detections, losses = self.model(images, targets)
-        # loss= sum(losses.values())
-        loss, iou, acc = self.calc_metrics(losses, detections, targets)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log('train_iou', iou, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        loss, iou, acc = self.step(batch)
+        self.log('train_loss', loss, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_iou', iou, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_acc', acc, on_epoch=True, prog_bar=True, logger=True)
         return {'loss': loss, 'iou':iou, 'acc': acc}
 
-        # (X1 + Y1 )/2 + (X2 + Y2)/2  = (X1+Y1+x2+Y2)/4
-
     def validation_step(self, batch, batch_idx):
-        # training_step defines the train loop. It is independent of forward
-        # TODO deal with empty bboxes in test?
-        images, targets = batch
-        to_remove_indices = []
-        for indx, target in enumerate(targets):
-            bbox = target['boxes'][0]
-            if bbox[0] >= bbox[2] or bbox[1] >= bbox[3]:
-                to_remove_indices.append(indx)
-        for indx in to_remove_indices:
-            images.pop(indx)
-            targets.pop(indx)
-        detections, losses = self.model(images, targets)
-        loss, iou, acc = self.calc_metrics(losses, detections, targets)
-        self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_iou', iou, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        # validation_step defines the train loop. It is independent of forward
+        loss, iou, acc = self.step(batch)
+        self.log('val_loss', loss, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_iou', iou, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_acc', acc, on_epoch=True, prog_bar=True, logger=True)
         return {'loss': loss, 'iou':iou, 'acc': acc}
 
     # todo add test_step?
     # def test_step:
     # targets = None
-
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
@@ -106,3 +74,23 @@ class LitModel(pl.LightningModule):
         if isinstance(iou, torch.Tensor):
             iou = iou.item()
         return sum_loss, iou, acc
+
+    def step(self, batch):
+        images, targets = batch
+        # TODO deal with empty bboxes okay?
+        to_remove_indices = []
+        for indx, target in enumerate(targets):
+            bbox = target['boxes'][0]
+            if bbox[0] >= bbox[2] or bbox[1] >= bbox[3]:
+                to_remove_indices.append(indx)
+        for indx in to_remove_indices:
+            images.pop(indx)
+            targets.pop(indx)
+
+        # x = self.model(images, targets)
+        detections, losses = self.model(images, targets)
+        # loss= sum(losses.values())
+        loss, iou, acc = self.calc_metrics(losses, detections, targets)
+        acc = acc / len(images)
+        iou = iou / len(images)
+        return loss, iou, acc
