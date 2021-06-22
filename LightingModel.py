@@ -21,7 +21,7 @@ class LitModel(pl.LightningModule):
                                        trainable_layers=trainable_backbone_layers)
         self.model = FasterRCNN(backbone,
                                 num_classes,
-                                box_detections_per_img=1,
+                                box_detections_per_img=1, # TODO is it good?
                                 min_size=cfg.min_size_image,
                                 max_size=cfg.max_size_image)
 
@@ -36,6 +36,7 @@ class LitModel(pl.LightningModule):
         self.log('train_loss', loss, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_iou', iou, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_acc', acc, on_epoch=True, prog_bar=True, logger=True)
+
         return {'loss': loss, 'iou':iou, 'acc': acc}
 
     def validation_step(self, batch, batch_idx):

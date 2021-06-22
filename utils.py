@@ -1,12 +1,8 @@
 import os
 import json
 import cv2
-import numpy as np
-import torch
-import torchvision
 import matplotlib.pyplot as plt
 from matplotlib import patches
-
 
 def parse_data_for_vis(filenames):
     """

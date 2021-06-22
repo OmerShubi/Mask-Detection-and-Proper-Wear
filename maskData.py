@@ -1,12 +1,10 @@
 import json
 import os
 from typing import Optional
-
 from torch.utils.data import Dataset, DataLoader, random_split
 import torchvision
 import torch
 import pytorch_lightning as pl
-from torchvision import transforms
 import config as cfg
 
 
