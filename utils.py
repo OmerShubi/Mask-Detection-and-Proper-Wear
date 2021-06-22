@@ -14,8 +14,6 @@ def parse_data_for_vis(filenames):
     :param image_dir: Path to directory with images.
     :return: A list with (filename, image_id, bbox, proper_mask) for every image in the image_dir.
     """
-
-
     data = []
     for filename in filenames:
         image_id, bbox, proper_mask = filename.strip(".jpg").split("__")
@@ -40,7 +38,6 @@ def calc_iou(bbox_a, bbox_b):
     intersection = w_intersection * h_intersection
     union = w1 * h1 + w2 * h2 - intersection    # Union = Total Area - Intersection
     return intersection / union
-
 
 def show_images_and_bboxes(data, image_dir, df):
     """
@@ -78,7 +75,7 @@ def show_images_and_bboxes(data, image_dir, df):
                                  facecolor='none',
                                  label='predicted')
         ax.add_patch(rect)
-        fig.suptitle(f"mask_gt={proper_mask}, mask_pred={df.loc[indx, 'proper_mask']}, IoU={iou:.2f}")
+        fig.suptitle(f"gt={proper_mask}, pred={df.loc[indx, 'proper_mask']}, IoU={iou:.2f}")
         ax.axis('off')
         fig.legend()
         plt.show()

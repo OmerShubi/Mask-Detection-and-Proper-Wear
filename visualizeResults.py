@@ -1,6 +1,6 @@
 import pandas as pd
 from utils import show_images_and_bboxes, parse_data_for_vis
-from config import val_dir
+import config as cfg
 
 # prediction.csv suppose to be on image_dir
 pred = pd.read_csv('prediction.csv')

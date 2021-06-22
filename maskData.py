@@ -7,6 +7,7 @@ import torchvision
 import torch
 import pytorch_lightning as pl
 from torchvision import transforms
+import config as cfg
 
 
 class maskDataset(Dataset):
@@ -44,9 +45,10 @@ class maskDataset(Dataset):
     def parse_image(self, filename):
         image_id, bbox, proper_mask = filename.strip(".jpg").split("__")
         bbox = json.loads(bbox)  # [x, y, w, h]
-        bbox = torch.tensor([[bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]])  # [x1, y1, x2, y2]
-        proper_mask = torch.tensor([1]) if proper_mask.lower() == "true" else torch.tensor([0])
-        im = torchvision.io.read_image(os.path.join(self.image_dir, filename))  # shape = (C,H,W) # TODO RGB/BGR?
+        bbox = torch.tensor([[bbox[cfg.x1_inx], bbox[cfg.y1_inx], bbox[cfg.x1_inx] + bbox[cfg.w_inx], bbox[cfg.y1_inx] + bbox[cfg.h_inx]]])  # [x1, y1, x2, y2]
+        # true -> class 2, false -> class 1, background -> class 0
+        proper_mask = torch.tensor([cfg.class_true]) if proper_mask.lower() == "true" else torch.tensor([cfg.class_false])
+        im = torchvision.io.read_image(os.path.join(self.image_dir, filename))  # shape = (C,H,W)
         im = im / im.max()
         target = {"boxes": bbox, "labels": proper_mask}
 
@@ -66,7 +68,7 @@ class MaskDataModule(pl.LightningDataModule):
         # self.transform = transforms.Compose([
         #     transforms.ToTensor(),
         #     transforms.Normalize((0.1307,), (0.3081,))
-        # ]) # TODO add transformations?
+        # ]) # TODO add transformations? change - im = im / im.max()
 
     def prepare_data(self):
         pass

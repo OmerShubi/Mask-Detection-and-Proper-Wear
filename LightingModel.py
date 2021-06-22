@@ -6,25 +6,24 @@ from torchvision.models.detection.backbone_utils import resnet_fpn_backbone
 
 from utils import calc_iou
 
-import config
+import config as cfg
 
 class LitModel(pl.LightningModule):
 
     def __init__(self):
         super().__init__()
         # self.save_hyperparameters() # TODO add if have hyper parms?
-
         trainable_backbone_layers = 5
         pretrained_backbone = False
-        num_classes = 2 # TODO should be 1 or 2?
+        num_classes = 3
         backbone = resnet_fpn_backbone('resnet18',
                                        pretrained_backbone,
                                        trainable_layers=trainable_backbone_layers)
         self.model = FasterRCNN(backbone,
                                 num_classes,
                                 box_detections_per_img=1,
-                                min_size=config.min_size_image,
-                                max_size=config.max_size_image)
+                                min_size=cfg.min_size_image,
+                                max_size=cfg.max_size_image)
 
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
@@ -47,10 +46,6 @@ class LitModel(pl.LightningModule):
         self.log('val_acc', acc, on_epoch=True, prog_bar=True, logger=True)
         return {'loss': loss, 'iou':iou, 'acc': acc}
 
-    # todo add test_step?
-    # def test_step:
-    # targets = None
-
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
@@ -62,10 +57,10 @@ class LitModel(pl.LightningModule):
         for detection, target in zip(detections, targets):
             pred_bbox = detection['boxes']
             pred_label = detection['labels']
-            if pred_bbox.numel(): # TODO do not return empty box as prediction
+            if pred_bbox.numel():
                 pred_bbox = pred_bbox[0]
-                pred_bbox[2] -= pred_bbox[0]
-                pred_bbox[3] -= pred_bbox[1]
+                pred_bbox[cfg.w_inx] = pred_bbox[cfg.x2_inx] - pred_bbox[cfg.x1_inx]
+                pred_bbox[cfg.h_inx] = pred_bbox[cfg.y2_inx] - pred_bbox[cfg.y1_inx]
                 iou += calc_iou(pred_bbox, target['boxes'][0].tolist())
 
                 if pred_label==target['labels']:
@@ -81,7 +76,7 @@ class LitModel(pl.LightningModule):
         to_remove_indices = []
         for indx, target in enumerate(targets):
             bbox = target['boxes'][0]
-            if bbox[0] >= bbox[2] or bbox[1] >= bbox[3]:
+            if bbox[cfg.x1_inx] >= bbox[cfg.x2_inx] or bbox[cfg.y1_inx] >= bbox[cfg.y2_inx]:
                 to_remove_indices.append(indx)
         for indx in to_remove_indices:
             images.pop(indx)
