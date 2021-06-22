@@ -2,7 +2,7 @@ train_dir = "train"
 val_dir = "test"
 
 # TODO change all parameters by debug/real running
-DEBUG = True
+DEBUG = False
 if DEBUG:
     num_workers = 0
     max_epochs = 2
@@ -13,7 +13,7 @@ if DEBUG:
     max_size_image = 300
 else:
     num_workers = 5
-    max_epochs = 2
+    max_epochs = 100
     batch_size = 4
     limit_train_batches = 1.0
     limit_val_batches = 1.0

@@ -21,3 +21,4 @@ Then in browser:
 - README
 - tries if can fall
 - read project def
+- Public git
