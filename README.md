@@ -12,7 +12,6 @@ Then in browser:
 - loss and bboxes in train / val
   - update env
 - code todos
-  
 - Tensorboard (activate and see graphs)
 - second experiment
 - EDA & report
@@ -22,6 +21,7 @@ Then in browser:
   - statsitcs about bboxes (sizes, places)  
 - save & load model from google drive
 - hypterparameter & optimiziation - if have time
+- check env creationg and running
 - README
 - Rand if no bbox?
 - max 1 bbox?

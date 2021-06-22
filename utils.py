@@ -42,7 +42,7 @@ def calc_iou(bbox_a, bbox_b):
     return intersection / union
 
 
-def show_images_and_bboxes2(data, image_dir, df):
+def show_images_and_bboxes(data, image_dir, df):
     """
     Plot images with bounding boxes. Predicts random bounding boxes and computes IoU.
     :param data: Iterable with (filename, image_id, bbox, proper_mask) structure.
