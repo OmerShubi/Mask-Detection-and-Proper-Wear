@@ -10,10 +10,11 @@ Then in browser:
 
 # TODOs
 - code todos
-- report - model
+- report
 - second experiment
+- hypterparameter & optimiziation 
+before submission - 
 - save & load model from google drive
-- hypterparameter & optimiziation - if have time
 - check env creation and running
 - README
 - tries if can fall
