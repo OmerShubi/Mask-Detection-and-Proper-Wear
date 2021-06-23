@@ -9,8 +9,8 @@ if DEBUG:
     batch_size = 4
     limit_train_batches = 0.05
     limit_val_batches = 0.05
-    min_size_image = 200
-    max_size_image = 300
+    min_size_image = 100
+    max_size_image = 100
 else:
     num_workers = 5
     max_epochs = 100

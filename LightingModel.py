@@ -22,8 +22,8 @@ class LitModel(pl.LightningModule):
         self.model = FasterRCNN(backbone,
                                 num_classes,
                                 min_size=cfg.min_size_image,
-                                max_size=cfg.max_size_image)#,
-                                #box_detections_per_img=1, # TODO is it good?)
+                                max_size=cfg.max_size_image,
+                                box_detections_per_img=1) # TODO is it good?
 
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
@@ -57,11 +57,9 @@ class LitModel(pl.LightningModule):
         acc = 0
         for detection, target in zip(detections, targets):
             pred_bbox = detection['boxes']
+            pred_label = detection['labels']
             if pred_bbox.numel():
-                left_bbox_inx = pred_bbox[:, cfg.x1_inx].argmin()
-                pred_bbox = pred_bbox[left_bbox_inx]
-                pred_label = detection['labels'][left_bbox_inx]
-                # pred_bbox = pred_bbox[0]
+                pred_bbox = pred_bbox[0]
                 pred_bbox[cfg.w_inx] = pred_bbox[cfg.x2_inx] - pred_bbox[cfg.x1_inx]
                 pred_bbox[cfg.h_inx] = pred_bbox[cfg.y2_inx] - pred_bbox[cfg.y1_inx]
                 iou += calc_iou(pred_bbox, target['boxes'][0].tolist())
@@ -72,6 +70,7 @@ class LitModel(pl.LightningModule):
         if isinstance(iou, torch.Tensor):
             iou = iou.item()
         return sum_loss, iou, acc
+
 
     def step(self, batch):
         images, targets = batch

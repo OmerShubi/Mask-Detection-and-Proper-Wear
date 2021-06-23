@@ -12,12 +12,12 @@ Then in browser:
 - code todos
 - report
 - second experiment
+- tries if can fall
 - hypterparameter & optimiziation 
 before submission - 
 - save & load model from google drive
 - check env creation and running
 - README
-- tries if can fall
 - read project def
 - public git
 - Hide code cells and export report to html
