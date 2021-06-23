@@ -66,7 +66,7 @@ class MaskDataModule(pl.LightningDataModule):
         # self.transform = transforms.Compose([
         #     transforms.ToTensor(),
         #     transforms.Normalize((0.1307,), (0.3081,))
-        # ]) # TODO add transformations? change - im = im / im.max()
+        # ])
 
     def prepare_data(self):
         pass

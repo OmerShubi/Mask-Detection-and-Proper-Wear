@@ -12,7 +12,6 @@ class LitModel(pl.LightningModule):
 
     def __init__(self):
         super().__init__()
-        # self.save_hyperparameters() # TODO add if have hyper parms?
         trainable_backbone_layers = 5
         pretrained_backbone = False
         num_classes = 3
@@ -23,7 +22,7 @@ class LitModel(pl.LightningModule):
                                 num_classes,
                                 min_size=cfg.min_size_image,
                                 max_size=cfg.max_size_image,
-                                box_detections_per_img=1) # TODO is it good?
+                                box_detections_per_img=1)
 
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
