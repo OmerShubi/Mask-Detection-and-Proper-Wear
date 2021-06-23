@@ -9,13 +9,10 @@
 before submission - 
 - save & load model from google drive
 - check env creation and running
-- README
 - read project def
 - public git
 - Hide code cells and export report to html
-2. make repo public
-3. delete unwanted files from repo and save pretrained model, scalers and such   
-4. recreate env and test model
+- delete unwanted files from repo and server
 
 python code for mask detection and for classifying proper wear.
 
