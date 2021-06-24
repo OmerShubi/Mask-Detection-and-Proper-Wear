@@ -2,7 +2,7 @@ train_dir = "train"
 val_dir = "test"
 
 # TODO change all parameters by debug/real running
-DEBUG = True
+DEBUG = False
 if DEBUG:
     num_workers = 0
     max_epochs = 2
