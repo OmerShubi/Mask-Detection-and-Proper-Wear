@@ -2,31 +2,56 @@ import torch
 
 import pytorch_lightning as pl
 from torchvision.models.detection import FasterRCNN
+from torchvision.models.detection.anchor_utils import AnchorGenerator
 from torchvision.models.detection.backbone_utils import resnet_fpn_backbone, mobilenet_backbone
+from torchvision.ops import MultiScaleRoIAlign
 
 from utils import calc_iou
 
 import config as cfg
 
+
 class LitModel(pl.LightningModule):
 
     def __init__(self):
         super().__init__()
-        trainable_backbone_layers = 5
+        self.mode = cfg.mode
+        self.min_size_image = cfg.min_size_image
+        self.max_size_image = cfg.max_size_image
         pretrained = False
         num_classes = 3
-        backbone = resnet_fpn_backbone('resnet18',
-                                       pretrained,
-                                       trainable_layers=trainable_backbone_layers)
-        # backbone = mobilenet_backbone(backbone_name="mobilenet_v3_small",
-        #                               pretrained=pretrained,
-        #                               fpn = False,
-        #                               trainable_layers=trainable_backbone_layers)
-        self.model = FasterRCNN(backbone,
-                                num_classes,
-                                min_size=cfg.min_size_image,
-                                max_size=cfg.max_size_image,
-                                box_detections_per_img=1)
+        if self.mode == 'resnet':
+            backbone = resnet_fpn_backbone('resnet50',
+                                           pretrained)
+
+            self.model = FasterRCNN(backbone,
+                                    num_classes,
+                                    min_size=cfg.min_size_image,
+                                    max_size=cfg.max_size_image,
+                                    box_detections_per_img=1)
+
+        elif self.mode == 'mobilenet':
+            backbone = mobilenet_backbone(backbone_name="mobilenet_v3_large",
+                                          pretrained=pretrained,
+                                          fpn=True)
+
+            anchor_generator = AnchorGenerator(
+                sizes=(32, 64, 128),
+                aspect_ratios=(0.5, 1.0, 2.0))
+
+            box_roi_pooler = MultiScaleRoIAlign(
+                featmap_names=['0'], output_size=7, sampling_ratio=2)
+
+            self.model = FasterRCNN(backbone,
+                                    num_classes,
+                                    rpn_anchor_generator=anchor_generator,
+                                    box_roi_pool=box_roi_pooler,
+                                    min_size=cfg.min_size_image,
+                                    max_size=cfg.max_size_image,
+                                    box_detections_per_img=1)
+
+        else:
+            print("Model type not supported")
 
     def forward(self, x):
         # in lightning, forward defines the prediction/inference actions
@@ -40,7 +65,7 @@ class LitModel(pl.LightningModule):
         self.log('train_iou', iou, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_acc', acc, on_epoch=True, prog_bar=True, logger=True)
 
-        return {'loss': loss, 'iou':iou, 'acc': acc}
+        return {'loss': loss, 'iou': iou, 'acc': acc}
 
     def validation_step(self, batch, batch_idx):
         # validation_step defines the train loop. It is independent of forward
@@ -48,11 +73,11 @@ class LitModel(pl.LightningModule):
         self.log('val_loss', loss, on_epoch=True, prog_bar=False, logger=True)
         self.log('val_iou', iou, on_epoch=True, prog_bar=False, logger=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=False, logger=True)
-        return {'loss': loss, 'iou':iou, 'acc': acc}
+        return {'loss': loss, 'iou': iou, 'acc': acc}
 
     def configure_optimizers(self):
-        # optimizer = torch.optim.Adam(self.parameters(), lr=1e-5)
-        optimizer = torch.optim.SGD(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        # optimizer = torch.optim.SGD(self.parameters(), lr=1e-3)
         return optimizer
 
     def calc_metrics(self, loss, detections, targets):

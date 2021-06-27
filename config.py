@@ -2,7 +2,7 @@ train_dir = "train"
 val_dir = "test"
 
 # TODO change all parameters by debug/real running
-DEBUG = False
+DEBUG = True
 if DEBUG:
     num_workers = 0
     max_epochs = 2
@@ -14,12 +14,13 @@ if DEBUG:
 else:
     num_workers = 5
     max_epochs = 100
-    batch_size = 8
+    batch_size = 32
     limit_train_batches = 1.0
     limit_val_batches = 1.0
     min_size_image = 224
     max_size_image = 224
 
+mode = 'mobilenet'  # 'resnet'
 model_path = 'lightning_logs/version_68/checkpoints/epoch=6-step=27999.ckpt'
 
 # Do not change

@@ -23,7 +23,7 @@ if __name__ == '__main__':
                          callbacks=[checkpoint_callback],
                          limit_train_batches=cfg.limit_train_batches,
                          limit_val_batches=cfg.limit_val_batches,
-                         gradient_clip_val=0.5)
+                         gradient_clip_val=10)
 
     trainer.fit(model, datamodule=data_module)
 
