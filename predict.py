@@ -19,7 +19,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if cfg.download_model:
-        download_model(file_id='123', dest_path='./model.zip') # TODO change file_id!
+        download_model(file_id=cfg.model_id, dest_path=cfg.model_drive_path)
 
     model = LitModel.load_from_checkpoint(cfg.model_path)
     model.eval()

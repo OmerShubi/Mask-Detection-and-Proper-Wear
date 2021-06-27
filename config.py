@@ -23,7 +23,9 @@ modes = {'mobilenet': 'mobilenet', 'resnet': 'resnet'}
 mode = modes['resnet'] # True
 model_path = 'lightning_logs/version_88/checkpoints/epoch=10-step=5499.ckpt'  # change to './model.ckpt' after upload
 download_model = False
+model_id = '123'
 # Do not change
+model_drive_path = './model.zip'
 random_seed = 0
 class_true = 2
 class_false = 1

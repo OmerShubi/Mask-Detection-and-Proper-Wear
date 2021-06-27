@@ -76,6 +76,7 @@ class LitModel(pl.LightningModule):
         self.log('val_sum', acc+iou, on_epoch=True, prog_bar=False, logger=True)
         return {'loss': loss, 'iou': iou, 'acc': acc, 'val_sum': acc+iou}
 
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         return optimizer

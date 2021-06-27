@@ -1,14 +1,33 @@
 # 094295_hw2
 
 #TODOS
-- code todos
-- second experiment : run with second mode 
-- finish report : results : acc, iou in chosen epoch, vis some predictions, second experiment, graphs in both. 
-- before submission - 
-    - save & load model from google drive
-    - check env creation and running
-    - read project def
-    - Hide code cells and export report to html and submit it
+
+runs:
+0. if possible - solve iou, if not 
+1. run with resnet mode
+2. run with mobilenet mode
+3. download csvs
+
+
+report:
+1. update num epochs x2
+2. update achieved IOU and acc X2
+3. run graphs again
+4. add conclusions
+5. export to html
+6. submit to moodle
+
+model:
+1. Upload final model to drive
+2. share and copy link to config. And change model_path 
+
+pre-submission check:   
+1. clone from git
+2. cd folder
+3. create env
+4. conda activate hw2_env
+4. run `python predict.py test`
+5. run `python evaluateResults.py` 
 
 python code for mask detection and for classifying proper wear.
 

@@ -1,4 +1,4 @@
-name: hw2_env
+name: hw2_env2
 channels:
   - default
   - pytorch
@@ -13,5 +13,5 @@ dependencies:
   - matplotlib=3.4.2
   - pip
   - pip:
-    - googledrivedownloader=0.4
+    - googledrivedownloader==0.4
     - git+https://github.com/scaperex/vision.git
