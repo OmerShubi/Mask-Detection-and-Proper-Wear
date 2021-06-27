@@ -8,7 +8,6 @@
     - save & load model from google drive
     - check env creation and running
     - read project def
-    - public git
     - Hide code cells and export report to html
     - delete unwanted files from repo and server
 

@@ -20,7 +20,7 @@ class maskDataset(Dataset):
                 on a sample.
         """
         self.image_dir = image_dir
-        self.filenames = os.listdir(image_dir)
+        self.filenames = sorted(os.listdir(image_dir))
 
         self.transform = transform
 

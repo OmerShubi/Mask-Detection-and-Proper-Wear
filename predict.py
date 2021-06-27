@@ -18,8 +18,6 @@ if __name__ == '__main__':
     parser.add_argument('input_folder', type=str, help='Input folder path, containing images')
     args = parser.parse_args()
 
-    files = os.listdir(args.input_folder)
-
     if cfg.download_model:
         download_model(file_id='123', dest_path='./model.zip') # TODO change file_id!
 
@@ -61,6 +59,7 @@ if __name__ == '__main__':
         print(f"Finished saving predictions batch {inx}")
 
     print(f"Random predict {count_no_prediction} out of {len(proper_mask_pred)}")
+    files = data_loader.dataset.filenames
     prediction_df = pd.DataFrame(zip(files, *np.array(bbox_pred, dtype=int).transpose(), proper_mask_pred),
                                  columns=['filename', 'x', 'y', 'w', 'h', 'proper_mask'])
 
