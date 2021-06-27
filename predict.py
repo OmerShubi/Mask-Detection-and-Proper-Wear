@@ -36,7 +36,7 @@ if __name__ == '__main__':
         if torch.cuda.is_available():
             images = [img.to(device=torch.device("cuda")) for img in images]
         predictions, _ = model(images)
-        print(f"Finished predict batch {inx}")
+        # print(f"Finished predict batch {inx}")
         for pred in predictions:
             if len(pred['labels']) > 0:
                 mask_pred = int(pred['labels']) == cfg.class_true
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             bbox[cfg.w_inx] = bbox[cfg.x2_inx] - bbox[cfg.x1_inx]
             bbox[cfg.h_inx] = bbox[cfg.y2_inx] - bbox[cfg.y1_inx]
             bbox_pred.append(bbox)
-        print(f"Finished saving predictions batch {inx}")
+        # print(f"Finished saving predictions batch {inx}")
 
     print(f"Random predict {count_no_prediction} out of {len(proper_mask_pred)}")
     files = data_loader.dataset.filenames

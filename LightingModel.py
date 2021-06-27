@@ -73,11 +73,11 @@ class LitModel(pl.LightningModule):
         self.log('val_loss', loss, on_epoch=True, prog_bar=False, logger=True)
         self.log('val_iou', iou, on_epoch=True, prog_bar=False, logger=True)
         self.log('val_acc', acc, on_epoch=True, prog_bar=False, logger=True)
-        return {'loss': loss, 'iou': iou, 'acc': acc}
+        self.log('val_sum', acc+iou, on_epoch=True, prog_bar=False, logger=True)
+        return {'loss': loss, 'iou': iou, 'acc': acc, 'val_sum': acc+iou}
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
-        # optimizer = torch.optim.SGD(self.parameters(), lr=1e-3)
         return optimizer
 
     def calc_metrics(self, loss, detections, targets):
@@ -100,28 +100,6 @@ class LitModel(pl.LightningModule):
             iou = iou.item()
         return sum_loss, iou, acc
 
-    # def calc_metrics(self, loss, detections, targets):
-    #     sum_loss = sum(loss.values())
-    #     iou = 0
-    #     acc = 0
-    #     for detection, target in zip(detections, targets):
-    #         pred_bbox = detection['boxes']
-    #         if pred_bbox.numel():
-    #             left_bbox_inx = pred_bbox[:, cfg.x1_inx].argmin()
-    #             pred_bbox = pred_bbox[left_bbox_inx]
-    #             pred_label = detection['labels'][left_bbox_inx]
-    #             # pred_bbox = pred_bbox[0]
-    #             pred_bbox[cfg.w_inx] = pred_bbox[cfg.x2_inx] - pred_bbox[cfg.x1_inx]
-    #             pred_bbox[cfg.h_inx] = pred_bbox[cfg.y2_inx] - pred_bbox[cfg.y1_inx]
-    #             iou += calc_iou(pred_bbox, target['boxes'][0].tolist())
-    #
-    #             if pred_label==target['labels']:
-    #                 acc += 1
-    #
-    #     if isinstance(iou, torch.Tensor):
-    #         iou = iou.item()
-    #     return sum_loss, iou, acc
-
     def step(self, batch):
         images, targets = batch
         to_remove_indices = []
@@ -133,9 +111,7 @@ class LitModel(pl.LightningModule):
             images.pop(indx)
             targets.pop(indx)
 
-        # x = self.model(images, targets)
         detections, losses = self.model(images, targets)
-        # loss= sum(losses.values())
         loss, iou, acc = self.calc_metrics(losses, detections, targets)
         acc = acc / len(images)
         iou = iou / len(images)

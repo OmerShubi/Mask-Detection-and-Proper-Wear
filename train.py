@@ -13,8 +13,8 @@ if __name__ == '__main__':
                                  batch_size=cfg.batch_size,
                                  num_workers=cfg.num_workers)
 
-    checkpoint_callback = ModelCheckpoint(monitor='val_acc',
-                                          save_top_k=1,
+    checkpoint_callback = ModelCheckpoint(monitor='val_sum',
+                                          save_top_k=5,
                                           mode='max')
 
     trainer = pl.Trainer(max_epochs=cfg.max_epochs,
