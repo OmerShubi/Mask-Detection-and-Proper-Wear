@@ -10,6 +10,8 @@ import config as cfg
 from maskData import MaskDataModule, maskDataset
 import torch
 
+from utils import download_model
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Process input')
@@ -17,6 +19,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     files = os.listdir(args.input_folder)
+
+    if cfg.download_model:
+        download_model(file_id='123', dest_path='./model.zip') # TODO change file_id!
 
     model = LitModel.load_from_checkpoint(cfg.model_path)
     model.eval()

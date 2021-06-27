@@ -2,7 +2,7 @@ train_dir = "train"
 val_dir = "test"
 
 # TODO change all parameters by debug/real running
-DEBUG = True
+DEBUG = False
 if DEBUG:
     num_workers = 0
     max_epochs = 2
@@ -21,8 +21,8 @@ else:
     max_size_image = 224
 
 mode = 'mobilenet'  # 'resnet'
-model_path = 'lightning_logs/version_68/checkpoints/epoch=6-step=27999.ckpt'
-
+model_path = 'lightning_logs/version_68/checkpoints/epoch=6-step=27999.ckpt' # change to './model.ckpt' after upload
+download_model = False
 # Do not change
 random_seed = 0
 class_true = 2

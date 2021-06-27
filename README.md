@@ -4,13 +4,13 @@
 - code todos
 - second experiment : backbone, hypeprarmeters , transformations, change - im = im / im.max()
 - finish report : results : acc, iou in chosen epoch, vis some predictions, second experiment, graphs in both. 
-before submission - 
-- save & load model from google drive
-- check env creation and running
-- read project def
-- public git
-- Hide code cells and export report to html
-- delete unwanted files from repo and server
+- before submission - 
+    - save & load model from google drive
+    - check env creation and running
+    - read project def
+    - public git
+    - Hide code cells and export report to html
+    - delete unwanted files from repo and server
 
 python code for mask detection and for classifying proper wear.
 

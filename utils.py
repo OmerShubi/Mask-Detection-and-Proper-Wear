@@ -3,6 +3,16 @@ import json
 import cv2
 import matplotlib.pyplot as plt
 from matplotlib import patches
+from google_drive_downloader import GoogleDriveDownloader as gdd
+
+
+def download_model(file_id, dest_path):
+
+    gdd.download_file_from_google_drive(file_id=file_id,
+                                        dest_path=dest_path,
+                                        unzip=True)
+
+
 
 def parse_data_for_vis(filenames):
     """
@@ -18,6 +28,7 @@ def parse_data_for_vis(filenames):
         data.append((filename, image_id, bbox, proper_mask))
     return data
 
+
 def calc_iou(bbox_a, bbox_b):
     """
     Calculate intersection over union (IoU) between two bounding boxes with a (x, y, w, h) format.
@@ -32,10 +43,11 @@ def calc_iou(bbox_a, bbox_b):
     if w_intersection <= 0.0 or h_intersection <= 0.0:  # No overlap
         return 0.0
     intersection = w_intersection * h_intersection
-    union = w1 * h1 + w2 * h2 - intersection    # Union = Total Area - Intersection
+    union = w1 * h1 + w2 * h2 - intersection  # Union = Total Area - Intersection
     return intersection / union
 
-def show_images_and_bboxes(data, image_dir, df):
+
+def show_images_and_bboxes(data, image_dir, df, num_images=-1):
     """
     Plot images with bounding boxes. Predicts random bounding boxes and computes IoU.
     :param data: Iterable with (filename, image_id, bbox, proper_mask) structure.
@@ -52,7 +64,7 @@ def show_images_and_bboxes(data, image_dir, df):
         # Ground truth bbox
         x1, y1, w1, h1 = bbox
         # Predicted bbox
-        predicted_left_bbox = df.loc[indx, ['x','y', 'w','h']]
+        predicted_left_bbox = df.loc[indx, ['x', 'y', 'w', 'h']]
         x2, y2, w2, h2 = predicted_left_bbox['x'], predicted_left_bbox['y'], predicted_left_bbox['w'], predicted_left_bbox['h']
         # Calculate IoU
         iou = calc_iou(bbox, (x2, y2, w2, h2))
@@ -76,5 +88,7 @@ def show_images_and_bboxes(data, image_dir, df):
         fig.legend()
         plt.show()
         os.makedirs('predictions', exist_ok=True)
-        plt.savefig(os.path.join('predictions',f'{image_id}_predicted.png'))
+        plt.savefig(os.path.join('predictions', f'{image_id}_predicted.png'))
 
+        if num_images > 0 and indx == num_images:
+            break

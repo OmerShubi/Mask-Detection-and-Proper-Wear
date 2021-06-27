@@ -16,4 +16,5 @@ dependencies:
   - matplotlib
   - pip
   - pip:
+    - googledrivedownloader
     - git+https://github.com/scaperex/vision.git #@v0.8.1
