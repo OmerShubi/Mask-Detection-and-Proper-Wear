@@ -19,7 +19,7 @@ report:
 
 model:
 1. Upload final model to drive
-2. share and copy link to config. And change model_path 
+2. config update all
 
 pre-submission check:   
 1. clone from git
