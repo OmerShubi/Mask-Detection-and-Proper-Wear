@@ -14,16 +14,16 @@ if DEBUG:
 else:
     num_workers = 5
     max_epochs = 100
-    batch_size = 4
+    batch_size = 8
     limit_train_batches = 1.0
     limit_val_batches = 1.0
-    min_size_image = 600
-    max_size_image = 1000
+    min_size_image = 224
+    max_size_image = 224
 
 model_path = 'lightning_logs/version_68/checkpoints/epoch=6-step=27999.ckpt'
 
 # Do not change
-random_seed = 8318
+random_seed = 0
 class_true = 2
 class_false = 1
 x1_inx = 0

@@ -22,7 +22,8 @@ if __name__ == '__main__':
                          num_sanity_val_steps=2,
                          callbacks=[checkpoint_callback],
                          limit_train_batches=cfg.limit_train_batches,
-                         limit_val_batches=cfg.limit_val_batches)
+                         limit_val_batches=cfg.limit_val_batches,
+                         gradient_clip_val=0.5)
 
     trainer.fit(model, datamodule=data_module)
 

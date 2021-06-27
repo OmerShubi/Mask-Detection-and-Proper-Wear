@@ -45,13 +45,14 @@ class LitModel(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         # validation_step defines the train loop. It is independent of forward
         loss, iou, acc = self.step(batch)
-        self.log('val_loss', loss, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_iou', iou, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_acc', acc, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_loss', loss, on_epoch=True, prog_bar=False, logger=True)
+        self.log('val_iou', iou, on_epoch=True, prog_bar=False, logger=True)
+        self.log('val_acc', acc, on_epoch=True, prog_bar=False, logger=True)
         return {'loss': loss, 'iou':iou, 'acc': acc}
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        # optimizer = torch.optim.Adam(self.parameters(), lr=1e-5)
+        optimizer = torch.optim.SGD(self.parameters(), lr=1e-3)
         return optimizer
 
     def calc_metrics(self, loss, detections, targets):
@@ -95,7 +96,6 @@ class LitModel(pl.LightningModule):
     #     if isinstance(iou, torch.Tensor):
     #         iou = iou.item()
     #     return sum_loss, iou, acc
-
 
     def step(self, batch):
         images, targets = batch
