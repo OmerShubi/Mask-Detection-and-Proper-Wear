@@ -92,7 +92,10 @@ class LitModel(pl.LightningModule):
                 pred_bbox = pred_bbox[0]
                 pred_bbox[cfg.w_inx] = pred_bbox[cfg.x2_inx] - pred_bbox[cfg.x1_inx]
                 pred_bbox[cfg.h_inx] = pred_bbox[cfg.y2_inx] - pred_bbox[cfg.y1_inx]
-                iou += calc_iou(pred_bbox, target['boxes'][0].tolist())
+                true_bbox = target['boxes'][0].tolist()
+                true_bbox[cfg.w_inx] = true_bbox[cfg.x2_inx] - true_bbox[cfg.x1_inx]
+                true_bbox[cfg.h_inx] = true_bbox[cfg.y2_inx] - true_bbox[cfg.y1_inx]
+                iou += calc_iou(pred_bbox, true_bbox)
 
                 if pred_label == target['labels']:
                     acc += 1

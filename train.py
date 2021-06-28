@@ -14,7 +14,7 @@ if __name__ == '__main__':
                                  num_workers=cfg.num_workers)
 
     checkpoint_callback = ModelCheckpoint(monitor='val_sum',
-                                          save_top_k=5,
+                                          save_top_k=10,
                                           mode='max')
 
     trainer = pl.Trainer(max_epochs=cfg.max_epochs,
