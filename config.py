@@ -20,12 +20,12 @@ else:
     min_size_image = 224
     max_size_image = 224
 modes = {'mobilenet': 'mobilenet', 'resnet': 'resnet'}
-mode = modes['resnet']
-model_path = 'lightning_logs/version_88/checkpoints/epoch=38-step=19499.ckpt'  # change to './model.ckpt' after upload
-download_model = False
-model_id = '123'
-# Do not change
-model_drive_path = './model.zip'
+mode = modes['mobilenet']
+
+model_path = 'epoch=11-step=5999.ckpt'
+download_model = True
+model_id = '1iI-ffwnqF23kX-jHTasUvWuZfioJ7F7T'
+model_drive_path = './epoch=11-step=5999.zip'
 random_seed = 0
 class_true = 2
 class_false = 1

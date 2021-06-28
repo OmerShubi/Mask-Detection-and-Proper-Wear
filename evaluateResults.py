@@ -5,7 +5,7 @@ import config as cfg
 
 print(f"model {cfg.model_path} is ")
 pred = pd.read_csv('prediction.csv')
-data = pd.DataFrame(parse_data_for_vis(sorted(os.listdir('test'))),
+data = pd.DataFrame(parse_data_for_vis(sorted(os.listdir(cfg.val_dir))),
                     columns=['filename', 'id', 'bbox', 'proper_mask'])
 iou = 0
 for pred_bbox, true_bbox in zip(pred[['x','y','w','h']].values, data["bbox"].values):
