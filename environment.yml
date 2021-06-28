@@ -1,4 +1,4 @@
-name: hw2_env2
+name: hw2_env
 channels:
   - default
   - pytorch

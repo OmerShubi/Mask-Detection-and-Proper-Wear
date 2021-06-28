@@ -20,7 +20,7 @@ else:
     min_size_image = 224
     max_size_image = 224
 modes = {'mobilenet': 'mobilenet', 'resnet': 'resnet'}
-mode = modes['mobilenet']
+mode = modes['resnet']
 
 model_path = 'epoch=11-step=5999.ckpt'
 download_model = True
