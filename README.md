@@ -1,14 +1,14 @@
-# 094295_hw2
+# Mask Detection and Proper Wear
 
 python code for mask detection and for classifying proper wear.
 
 Detailed report can be found under `report` file.
 
 To get the code simply clone it - 
-`git clone https://github.com/scaperex/094295_hw2.git`
+`git clone https://github.com/scaperex/Mask-Detection-and-Proper-Wear.git`
 
 Then, to setup the environment - 
-- `cd 094295_hw2`
+- `cd Mask-Detection-and-Proper-Wear`
 - `conda env create -f environment.yml`
 
 Activate it by -
