@@ -12,7 +12,7 @@ Then, to setup the environment -
 - `conda env create -f environment.yml`
 
 Activate it by -
-`conda activate hw2_env`
+`conda activate mask_detection`
 
 Finally, to evaluate the pretrained model simply run 
 `python predict.py <PATH_TO_FOLDER>`.
